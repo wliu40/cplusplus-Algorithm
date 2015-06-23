@@ -1,0 +1,71 @@
+//This is also a problem from LeetCode
+//Sort a linked list in O(n log n) time using constant space complexity.
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // find the middle ListNode by offering the head
+    ListNode *getMid(ListNode *head)
+    {
+    	ListNode *slow, *fast;
+    	slow = fast = head;
+    	while (slow && fast && fast->next && fast->next->next)
+    	{
+    		slow = slow->next;
+    		fast = fast->next->next;
+    	}
+    	return slow;
+    }
+    //merge two sorted linked list
+    ListNode* merge(ListNode *head1, ListNode *head2)
+    {
+    	ListNode *tmp1 = head1;
+    	ListNode *tmp2 = head2;
+    	ListNode *newHead = new ListNode(0);
+    	ListNode *cur = newHead;
+    	while (tmp1 && tmp2)
+    	{
+    		if (tmp1->val <= tmp2->val){
+    			cur->next = tmp1;
+    			tmp1 = tmp1->next;
+    		}
+    		else{
+    			cur->next = tmp2;
+    			tmp2 = tmp2->next;
+    		}
+    		cur = cur->next;
+    	}
+    	//append the remaining Linkedlist to cur
+    	if (tmp1)
+    	    cur->next = tmp1;
+    	else
+    		cur->next = tmp2;
+    	return newHead->next;
+    }
+    
+    ListNode *mergeSort(ListNode *head, ListNode *tail)
+    {
+    	if (head == tail)
+    		return head;
+    	ListNode *mid = getMid(head);
+    	ListNode *right = mergeSort(mid->next, tail); // mergeSort right part
+    	mid->next = nullptr;
+    	ListNode *left = mergeSort(head, mid);//mergeSort left part
+    	return merge(left, right); //return the sorted
+    }
+    
+    ListNode* sortList(ListNode* head) {
+    	if (!head)
+    	    return nullptr;
+    	ListNode *tail = head;
+    	while (tail->next)
+    		tail = tail->next;	
+    	return mergeSort(head, tail);
+    }
+};
